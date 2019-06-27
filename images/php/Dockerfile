@@ -1,5 +1,6 @@
-FROM php:7.1-fpm
-MAINTAINER Mark Shust <mark@shust.com>
+FROM php:7.2-fpm
+
+MAINTAINER Marek Mularczyk <mmularczyk9@gmail.com>
 
 RUN apt-get update && apt-get install -y \
   cron \
@@ -13,8 +14,9 @@ RUN apt-get update && apt-get install -y \
   libxslt1-dev \
   lsof \
   mysql-client \
-  vim \
-  zip
+  nano \
+  zip \
+  procps
 
 RUN docker-php-ext-configure \
   gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
@@ -24,17 +26,16 @@ RUN docker-php-ext-install \
   gd \
   intl \
   mbstring \
-  mcrypt \
   opcache \
   pdo_mysql \
   soap \
   xsl \
   zip
 
-RUN pecl channel-update pecl.php.net \
-  && pecl install xdebug \
-  && docker-php-ext-enable xdebug \
-  && sed -i -e 's/^zend_extension/\;zend_extension/g' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN yes | pecl install xdebug \
+    && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini
 
 RUN apt-get install -y libssh2-1-dev \
   && pecl install ssh2-1.1.2 \
@@ -71,4 +72,4 @@ VOLUME /var/www
 
 WORKDIR /var/www/html
 
-EXPOSE 9001
+EXPOSE 9000
