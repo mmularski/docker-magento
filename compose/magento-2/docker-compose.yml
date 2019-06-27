@@ -18,10 +18,13 @@ services:
       - sockdata:/sock
 
   phpfpm:
-    image: markoshust/magento-php:7.2-fpm-0
+    image: magento-php:latest
     links:
       - db
     volumes: *appvolumes
+    environment:
+      XDEBUG_CONFIG: "remote_host=192.168.52.161"
+      PHP_IDE_CONFIG: "serverName=MFTF"
 
   db:
     image: percona:5.7
@@ -39,6 +42,32 @@ services:
     ports:
       - "9200:9200"
       - "9300:9300"
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - ./env/rabbitmq/rabbitmq-isolated.conf:/etc/rabbitmq/rabbitmq.config
+
+  selenium:
+    image: selenium/standalone-chrome:3.141.59-oxygen
+    ports:
+      - "4444:4444"
+
+  allure:
+    image: "frankescobar/allure-docker-service"
+    ports:
+      - "4040:4040"
+      - "5050:5050"
+    volumes:
+      - ./src/dev/tests/acceptance/tests/_output/allure-results:/app/allure-results
 
   # Disabling cron by default as it uses higher CPU, enable if needed
   #cron:
