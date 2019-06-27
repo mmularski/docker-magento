@@ -83,3 +83,6 @@ services:
   #    - ~/.composer:/var/www/.composer:delegated
   #    - sockdata:/sock
 
+volumes:
+  sockdata:
+  dbdata:
