@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="9ee82ce8-fafa-4d9d-b481-b961a87ebd4d" name="MM-Magento2" url="http://mm.magento2.local">
+        <fileTransfer host="mm.magento2.local" port="22" rootFolder="/home/mmularczyk/Magento2" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
