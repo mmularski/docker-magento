@@ -30,7 +30,7 @@ rm -rf src/vendor #Clear for step below
 docker cp src/./ $(docker-compose ps -q phpfpm|awk '{print $1}'):/var/www/html/
 echo "Completed copying all files from host to container"
 
-docker-compose exec phpfpm bash chmod u+x bin/magento
+docker-compose exec phpfpm -T "chmod u+x bin/magento"
 
 if hash composer 2>/dev/null; then
     PUBLIC_KEY="$(composer config -gl | grep '\[http-basic.repo.magento.com.username\]' | cut -c40-)"
@@ -57,15 +57,15 @@ if [ -z "$PUBLIC_KEY" ] || [ -z "$PRIVATE_KEY" ]; then
 fi
 
 if [ -n "$PUBLIC_KEY" ] && [ -n "$PRIVATE_KEY" ]; then
-    docker-compose exec phpfpm bash composer config http-basic.repo.magento.com $PUBLIC_KEY $PRIVATE_KEY
+    docker-compose exec phpfpm -T "composer config http-basic.repo.magento.com $PUBLIC_KEY $PRIVATE_KEY"
     PUBLIC_KEY=''
     PRIVATE_KEY=''
 fi
 
 echo "Forcing reinstall of composer deps to ensure perms & reqs..."
-docker-compose exec phpfpm bash composer install
+docker-compose exec phpfpm -T "composer install"
 
-bin/clinotty bin/magento setup:install \
+docker-compose exec phpfpm -T "bin/magento setup:install \
   --db-host=db \
   --db-name=magento \
   --db-user=magento \
@@ -79,7 +79,7 @@ bin/clinotty bin/magento setup:install \
   --language=en_US \
   --currency=USD \
   --timezone=America/New_York \
-  --use-rewrites=1
+  --use-rewrites=1"
 
 echo "Turning on developer mode.."
 docker-compose exec phpfpm bash php bin/magento deploy:mode:set developer
