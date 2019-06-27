@@ -82,24 +82,24 @@ docker-compose exec -T phpfpm bin/magento setup:install \
   --use-rewrites=1
 
 echo "Turning on developer mode.."
-docker-compose exec phpfpm bash php bin/magento deploy:mode:set developer
+docker-compose exec -T phpfpm php bin/magento deploy:mode:set developer
 
-docker-compose exec phpfpm bash php bin/magento indexer:reindex
+docker-compose exec -T phpfpm php bin/magento indexer:reindex
 
 echo "Forcing deploy of static content to speed up initial requests..."
-docker-compose exec phpfpm bash php bin/magento setup:static-content:deploy -f 
+docker-compose exec -T phpfpm php bin/magento setup:static-content:deploy -f
 
 echo "Enabling Redis for cache..."
-docker-compose exec phpfpm bash php bin/magento setup:config:set --no-interaction --cache-backend=redis --cache-backend-redis-server=redis --cache-backend-redis-db=0
+docker-compose exec -T phpfpm php bin/magento setup:config:set --no-interaction --cache-backend=redis --cache-backend-redis-server=redis --cache-backend-redis-db=0
 
 echo "Enabling Redis for Full Page Cache..."
-docker-compose exec phpfpm bash php bin/magento setup:config:set --no-interaction  --page-cache=redis --page-cache-redis-server=redis --page-cache-redis-db=1
+docker-compose exec -T phpfpm php bin/magento setup:config:set --no-interaction  --page-cache=redis --page-cache-redis-server=redis --page-cache-redis-db=1
 
 echo "Enabling Redis for session..."
-docker-compose exec phpfpm bash php bin/magento setup:config:set --no-interaction --session-save=redis --session-save-redis-host=redis --session-save-redis-log-level=4 --session-save-redis-db=2
+docker-compose exec -T phpfpm php bin/magento setup:config:set --no-interaction --session-save=redis --session-save-redis-host=redis --session-save-redis-log-level=4 --session-save-redis-db=2
 
 echo "Clearing the cache for good measure..."
-docker-compose exec phpfpm bash php bin/magento cache:flush
+docker-compose exec -T phpfpm php bin/magento cache:flush
 
 echo "Copying files from container to host after install..."
 docker cp $(docker-compose ps -q phpfpm|awk '{print $1}'):/var/www/html/./ src/
