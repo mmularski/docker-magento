@@ -1,27 +1,28 @@
-# Mark Shust's Docker Configuration for Magento (https://github.com/markshust/docker-magento)
-# Version 23.0.0
 
 version: "3"
 
 services:
   app:
-    image: markoshust/magento-nginx:1.13-7
+    image: mmularski/magento2-nginx:latest
     ports:
       - "80:8000"
       - "443:8443"
     links:
       - db
       - phpfpm
-    volumes: &appvolumes
+    volumes:
+      - "./src/:/var/www/html"
       - ~/.composer:/var/www/.composer:delegated
-      - appdata:/var/www/html
       - sockdata:/sock
 
   phpfpm:
-    image: magento-php:latest
+    image: mmularski/magento2-phpfpm:latest
     links:
       - db
-    volumes: *appvolumes
+    volumes:
+      - "./src/:/var/www/html"
+      - ~/.composer:/var/www/.composer:delegated
+      - sockdata:/sock
     environment:
       XDEBUG_CONFIG: "remote_host=192.168.52.161"
       PHP_IDE_CONFIG: "serverName=MFTF"
@@ -44,7 +45,7 @@ services:
       - "9300:9300"
 
   rabbitmq:
-    image: "rabbitmq:3-management"
+    image: rabbitmq:3-management
     environment:
       RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
       RABBITMQ_DEFAULT_USER: "rabbitmq"
@@ -62,7 +63,7 @@ services:
       - "4444:4444"
 
   allure:
-    image: "frankescobar/allure-docker-service"
+    image: frankescobar/allure-docker-service
     ports:
       - "4040:4040"
       - "5050:5050"
@@ -71,15 +72,14 @@ services:
 
   # Disabling cron by default as it uses higher CPU, enable if needed
   #cron:
-  #  image: markoshust/magento-php:7.2-fpm-0
+  #  image: mmularski/magento2-phpfpm:latest
   #  user: root
   #  command: /usr/local/bin/cronstart
   #  tty: true
   #  links:
   #    - db
-  #  volumes: *appvolumes
+  #  volumes:
+  #    - "./src/:/var/www/html"
+  #    - ~/.composer:/var/www/.composer:delegated
+  #    - sockdata:/sock
 
-volumes:
-  appdata:
-  dbdata:
-  sockdata:
