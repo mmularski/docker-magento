@@ -84,5 +84,5 @@ services:
   #    - sockdata:/sock
 
 volumes:
-  sockdata:
   dbdata:
+  sockdata:
