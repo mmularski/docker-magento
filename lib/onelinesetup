@@ -2,19 +2,17 @@
 DOMAIN=${1:-magento2.test}
 VERSION=${2:-2.3.2}
 
-[ -z "$1" ] && echo "Please specify the version to download (ex. 2.0.0)" && exit
-mkdir -p src && curl -L http://pubfiles.nexcess.net/magento/ce-packages/magento2-$1.tar.gz | tar xzf - -o -C src
+[ -z "$2" ] && echo "Please specify the version to download (ex. 2.0.0)" && exit
+mkdir -p src && curl -L http://pubfiles.nexcess.net/magento/ce-packages/magento2-$2.tar.gz | tar xzf - -o -C src
 
 git init -qqq
 git remote add origin https://github.com/mmularski/magento2-docker
 git fetch origin -qqq
 git checkout origin/master -- compose/$1
-mv compose/$1/* ./
-mv compose/$1/.vscode ./
+mv compose/$2/* ./
+mv compose/$2/.vscode ./
 rm -rf compose .git
 git init
-
-BASE_URL=${1:-magento2.test}
 
 docker-compose stop
 
@@ -72,7 +70,7 @@ bin/clinotty bin/magento setup:install \
   --db-name=magento \
   --db-user=magento \
   --db-password=magento \
-  --base-url=https://$BASE_URL/ \
+  --base-url=https://$1/ \
   --admin-firstname=John \
   --admin-lastname=Smith \
   --admin-email=john.smith@gmail.com \
@@ -112,4 +110,4 @@ docker-compose stop
 docker-compose up -d
 
 echo "Docker development environment setup complete."
-echo "Add VM IP to /etc/hosts file and you may access your Magento instance at https://${BASE_URL}/"
+echo "Add VM IP to /etc/hosts file and you may access your Magento instance at https://$1/"
