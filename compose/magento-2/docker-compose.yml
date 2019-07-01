@@ -12,6 +12,7 @@ services:
       - phpfpm
     volumes:
       - "./src/:/var/www/html"
+      - ./src/nginx.conf.sample:/var/www/html/nginx.conf:delegated
       - ~/.composer:/var/www/.composer:delegated
       - sockdata:/sock
 
@@ -21,6 +22,7 @@ services:
       - db
     volumes:
       - "./src/:/var/www/html"
+      - ./src/nginx.conf.sample:/var/www/html/nginx.conf:delegated
       - ~/.composer:/var/www/.composer:delegated
       - sockdata:/sock
     environment:
