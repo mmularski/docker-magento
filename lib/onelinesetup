@@ -2,18 +2,6 @@
 DOMAIN=${1:-magento2.test}
 VERSION=${2:-2.3.2}
 
-[ -z "$2" ] && echo "Please specify the version to download (ex. 2.0.0)" && exit
-mkdir -p src && curl -L http://pubfiles.nexcess.net/magento/ce-packages/magento2-$2.tar.gz | tar xzf - -o -C src
-
-git init -qqq
-git remote add origin https://github.com/mmularski/magento2-docker
-git fetch origin -qqq
-git checkout origin/master -- compose/magento-2
-mv compose/magento-2/* ./
-mv compose/magento-2/.vscode ./
-rm -rf compose .git
-git init
-
 docker-compose stop
 
 # get rid of vertex/module-tax, not required and causes checksum errors on composer install
