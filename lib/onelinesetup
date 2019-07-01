@@ -18,7 +18,7 @@ rm -rf src/vendor #Clear for step below
 docker cp src/./ $(docker-compose ps -q phpfpm|awk '{print $1}'):/var/www/html/
 echo "Completed copying all files from host to container"
 
-docker-compose exec -T phpfpm chmod u+x bin/magento
+docker-compose exec phpfpm chmod u+x bin/magento
 echo "bin/magento chmod successful"
 
 if hash composer 2>/dev/null; then
