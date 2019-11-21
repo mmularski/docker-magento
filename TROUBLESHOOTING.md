@@ -28,4 +28,11 @@ Restart the docker daemon with new startup options:
 $ sudo systemctl restart docker.service
 ````
 
+Also be sure that user which executed `docker-compose` is in docker group
+````
+$ sudo groupadd docker
+$ sudo usermod -aG docker $USER
+$ newgrp docker 
+````
+
 Ensure that anyone that has access to the TCP listening socket is a trusted user since access to the docker daemon is root-equivalent.cStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2376
