@@ -3,11 +3,10 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="9ee82ce8-fafa-4d9d-b481-b961a87ebd4d" name="MM-Magento2" url="http://mm.magento2.local">
-        <fileTransfer host="mm.magento2.local" port="22" rootFolder="/home/mmularczyk/Magento2" accessType="SFTP">
+        <fileTransfer rootFolder="/home/mmularczyk/Magento2" accessType="SFTP" host="solar.local" port="22" sshConfigId="4df837be-9592-46cd-8a56-d9ca51065903" sshConfig="solar@solar.local:22 key" keyPair="true">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>
-          <option name="port" value="22" />
         </fileTransfer>
       </webServer>
     </option>

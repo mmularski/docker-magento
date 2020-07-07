@@ -3,7 +3,8 @@ version: "3"
 
 services:
   app:
-    image: mmularski/magento2-nginx:latest
+    build:
+      context: ./../../images/nginx
     ports:
       - "80:8000"
       - "443:8443"
@@ -11,23 +12,22 @@ services:
       - db
       - phpfpm
     volumes:
-      - "./src/:/var/www/html"
-      - ./src/nginx.conf.sample:/var/www/html/nginx.conf:delegated
+      - ./src/project-community-edition:/var/www/html
+      - ./src/project-community-edition/nginx.conf.sample:/var/www/html/nginx.conf
       - ~/.composer:/var/www/.composer:delegated
       - sockdata:/sock
 
   phpfpm:
-    image: mmularski/magento2-phpfpm:latest
+    build:
+      context: ./../../images/php
     links:
       - db
     volumes:
-      - "./src/:/var/www/html"
-      - ./src/nginx.conf.sample:/var/www/html/nginx.conf:delegated
-      - ~/.composer:/var/www/.composer:delegated
+      - ./src/project-community-edition:/var/www/html
+      - ./src/project-community-edition/nginx.conf.sample:/var/www/html/nginx.conf
       - sockdata:/sock
     environment:
-      XDEBUG_CONFIG: "remote_host=192.168.52.161"
-      PHP_IDE_CONFIG: "serverName=MFTF"
+      XDEBUG_CONFIG: remote_host=host.docker.internal
 
   db:
     image: percona:5.7
@@ -38,10 +38,12 @@ services:
       - dbdata:/var/lib/mysql
 
   redis:
-    image: redis:5.0
+    image: redis
+    ports:
+      - "6379:6379"
 
   elasticsearch:
-    image: elasticsearch:5.6
+    image: elasticsearch:6.4.1
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -59,31 +61,18 @@ services:
     volumes:
       - ./env/rabbitmq/rabbitmq-isolated.conf:/etc/rabbitmq/rabbitmq.config
 
-  selenium:
-    image: selenium/standalone-chrome:3.141.59-oxygen
-    ports:
-      - "4444:4444"
-
-  allure:
-    image: frankescobar/allure-docker-service
-    ports:
-      - "4040:4040"
-      - "5050:5050"
-    volumes:
-      - ./src/dev/tests/acceptance/tests/_output/allure-results:/app/allure-results
-
-  # Disabling cron by default as it uses higher CPU, enable if needed
-  #cron:
-  #  image: mmularski/magento2-phpfpm:latest
-  #  user: root
-  #  command: /usr/local/bin/cronstart
-  #  tty: true
-  #  links:
-  #    - db
-  #  volumes:
-  #    - "./src/:/var/www/html"
-  #    - ~/.composer:/var/www/.composer:delegated
-  #    - sockdata:/sock
+#  selenium:
+#    image: selenium/standalone-chrome:3.141.59-oxygen
+#    ports:
+#      - "4444:4444"
+#
+#  allure:
+#    image: frankescobar/allure-docker-service
+#    ports:
+#      - "4040:4040"
+#      - "5050:5050"
+#    volumes:
+#      - ./src/dev/tests/acceptance/tests/_output/allure-results:/app/allure-results
 
 volumes:
   dbdata:
